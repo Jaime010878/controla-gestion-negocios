@@ -40,7 +40,7 @@ function toast(s){const e=$('#toast');e.textContent=s;e.classList.remove('hidden
 function show(id){['setup','auth','businessSetup','app'].forEach(x=>$('#'+x).classList.toggle('hidden',x!==id))}
 function tab(id){$$('.section').forEach(x=>x.classList.toggle('active',x.id===id));$$('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.tab===id));if(id==='reports')renderReports()}
 $$('.nav button').forEach(b=>b.onclick=()=>tab(b.dataset.tab));$$('[data-goto]').forEach(b=>b.onclick=()=>tab(b.dataset.goto));
-function getConfig(){return {url:localStorage.getItem('controla_sb_url'),key:localStorage.getItem('controla_sb_key')}}
+function getConfig(){return {url:localStorage.getItem('controla_sb_url')||'https://elftpwgdljbmcxgmmdrd.supabase.co',key:localStorage.getItem('controla_sb_key')||'sb_publishable_Cjp6ZC4awoUhUhtU4JmWOA_0-2iyLVx'}}
 function init(){const c=getConfig();if(!c.url||!c.key||!window.supabase){show('setup');return}try{sb=window.supabase.createClient(c.url,c.key)}catch(e){show('setup');$('#setupMsg').textContent='Revisa la URL y la clave.';return}sb.auth.getSession().then(({data})=>data.session?start(data.session.user):show('auth'));sb.auth.onAuthStateChange((_e,s)=>{if(s)start(s.user);else{user=null;business=null;show('auth')}})}
 $('#saveConfig').onclick=()=>{const u=$('#sbUrl').value.trim(),k=$('#sbKey').value.trim();if(!/^https:\/\//.test(u)||!k){$('#setupMsg').textContent='Ingresa una URL https válida y la clave pública.';return}localStorage.setItem('controla_sb_url',u);localStorage.setItem('controla_sb_key',k);init()};
 $('#signIn').onclick=async()=>{const {error}=await sb.auth.signInWithPassword({email:$('#email').value.trim(),password:$('#password').value});$('#authMsg').textContent=error?error.message:'Acceso correcto.'};
